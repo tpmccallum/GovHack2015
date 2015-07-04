@@ -8,14 +8,13 @@ abcJson = urllib.urlopen(url).read()
 abcData = json.loads(abcJson.decode('utf-8-sig', 'ignore'))
 
 getText(url):
-    #<div class="story">
-    #<div class="summary">
-
-    #<div class="story_body description">
-
-    source = urllib.urlopen(url)read()
-    soup = BeautifulSoup(source)
-    return soup.findAll(id=["summary", "first"])
+    textString = ""
+    Soup = BeautifulSoup.BeautifulSoup
+    source = urllib.urlopen(url).read()
+    soup = Soup(source)
+    for i in soup.findAll("p"):
+        textString += i.text
+    return textString
 
 #print j
 for item in abcData:
