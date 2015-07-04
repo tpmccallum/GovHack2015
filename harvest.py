@@ -1,4 +1,3 @@
-#
 import urllib
 import json
 import BeautifulSoup
@@ -19,14 +18,21 @@ def getText(url):
 
 for item in abcData:
     url = item['URL']
+    print url
     date = item['Date']
+    print date
     title = item['Title']
+    print title
     subjects = item['Subjects']
+    print subjects 
     station = item['Station']
+    print station
     place = item['Place']
+    print place
     keywords = item['Keywords']
+    print keywords
     textP = getText(url)
-    fullText = " "
-    seq = (title, textP, subjects, station, place, keywords)
-    fullText.join( seq )
-    print "\n %s " % (fullText)
+    print textP
+    print "creating full text"
+    fullText = " ".join([title, textP, subjects, station, place, keywords])
+    print "full text is - %s " % (fullText)
