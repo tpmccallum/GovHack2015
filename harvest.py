@@ -16,7 +16,6 @@ getText(url):
         textString += i.text
     return textString
 
-#print j
 for item in abcData:
     url = item['URL']
     date = item['Date']
@@ -27,3 +26,4 @@ for item in abcData:
     keywords = item['Keywords']
     text = getText(url)
     textString = " ".join(title, subjects, station, place, keywords, text)
+    print "\n %s " % (textString)
