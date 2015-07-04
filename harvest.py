@@ -4,6 +4,8 @@ import BeautifulSoup
 import re
 import os
 import subprocess
+import codecs
+import xml.dom.minidom
 
 url= 'http://data.gov.au/dataset/3fd356c6-0ad4-453e-82e9-03af582024c3/resource/3182591a-085a-465b-b8e5-6bfd934137f1/download/Localphotostories2009-2014-JSON.json'
 abcJson = urllib.urlopen(url).read()
@@ -12,6 +14,10 @@ abcData = json.loads(abcJson.decode('utf-8-sig', 'ignore'))
 def removeEverythingButAlphaNumeric(stringToClean):
     textFinal = re.sub(r'\W+', ' ', stringToClean)
     return textFinal
+
+def createJsonCatalogTxt(year, town, filename, searchString):
+    jsonObject1 = {u"date": int(year), u"town": town, u"filename": filename, u"searchstring": searchString}
+    return json.dumps(jsonObject1)
     
 def removeSpaces(stringToClean):
     pattern = re.compile(r'\s+')
@@ -68,6 +74,7 @@ for item in abcData:
     print url
     date = item['Date']
     print date
+    year = date[-4:]
     title = item['Title']
     print title
     subjects = item['Subjects']
@@ -83,14 +90,17 @@ for item in abcData:
     print "creating full text"
     fullTextPre = " ".join([title, textP, subjects, station, place, keywords])
     fullText = removeEverythingButAlphaNumeric(fullTextPre)
-    searchString = createSearchString(year, place, url, title)
-    print "Writing to the jsoncatalogfile"
-    jsonCatalogFile.write(createJsonCatalogTxt(paper_year, uni, manuscript_text_file, searchString))
-    jsonCatalogFile.write("\n")
+
     print "Creating text file"
-    createTextFileName(url)
-    textFileObject = open(os.path.join(textFileDir, textFileName[0]), 'wb')
+    textFileName = createTextFileName(url)
+    textFileObject = codecs.open(os.path.join(textFileDir, textFileName[0]), 'wb', "utf-8")
     textFileObject.write(fullText)
     textFileObject.close()
+
+    searchString = createSearchString(year, place, url, title)
+    print "Writing to the jsoncatalogfile"
+    jsonCatalogFile.write(createJsonCatalogTxt(year, place, textFileName, searchString))
+    jsonCatalogFile.write("\n")
+    
     print "* finished processing this single item"
 print "Finished processing all items"
