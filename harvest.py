@@ -7,6 +7,15 @@ url= 'http://data.gov.au/dataset/3fd356c6-0ad4-453e-82e9-03af582024c3/resource/3
 abcJson = urllib.urlopen(url).read()
 abcData = json.loads(abcJson.decode('utf-8-sig', 'ignore'))
 
+def removeEverythingButAlphaNumeric(stringToClean):
+    textFinal = re.sub(r'\W+', ' ', stringToClean)
+    return textFinal
+    
+def removeSpaces(stringToClean):
+    pattern = re.compile(r'\s+')
+    cleanString = re.sub(pattern, '', stringToClean)
+    return cleanString
+
 def getText(url):
     textString = ""
     Soup = BeautifulSoup.BeautifulSoup
@@ -15,6 +24,33 @@ def getText(url):
     for i in soup.findAll("p"):
         textString += i.text
     return textString
+    
+def createSearchString(year, town, url, title):
+    #create dom object
+    doc = xml.dom.minidom.Document()
+    #create anchor element
+    anchor = doc.createElement('a')
+    #add attributes to element
+    anchor.attributes['href']= url
+    anchor.attributes['target']= "_blank"
+    #create text for inside the element
+    txt = doc.createTextNode("%s - %s a news story from %s" % (title, year, town))
+    anchor.appendChild(txt)
+    return anchor.toxml()
+    
+currentDir = os.getcwd()
+print "Current working directory is %s" % (currentDir)
+print "Creating output environment"
+pTrt = os.path.join(currentDir, "files", "texts", "raw")
+#TODO symlink the text files to the raw directory
+if (not os.path.exists(pTrt)):
+    os.makedirs(pTrt)
+os.makedirs(os.path.join(currentDir, "files", "metadata"))
+#TODO put a copy of the field_descriptions.json file here (duplicate copy)
+print "Copying our field_descriptions.json file from %s to the files/metadata dir " % (currentDir)
+subprocess.call(['cp', 'field_descriptions.json', 'files/metadata/'])
+print "Creating the jsoncatalog.txt file"
+jsonCatalogFile = codecs.open(os.path.join(currentDir, "files", "metadata" , "jsoncatalog.txt"), 'wb', "utf-8")
 
 for item in abcData:
     url = item['URL']
@@ -35,4 +71,4 @@ for item in abcData:
     print textP
     print "creating full text"
     fullText = " ".join([title, textP, subjects, station, place, keywords])
-    print "full text is - %s " % (fullText)
+    searchString = createSearchString(paper_year, uni, manuscript_url, paper_title)
