@@ -38,6 +38,11 @@ def createSearchString(year, town, url, title):
     anchor.appendChild(txt)
     return anchor.toxml()
     
+def createTextFileName(pdfUrl):
+    textFileName1 = removeEverythingButAlphaNumeric(pdfUrl)
+    textFileName2 = removeSpaces(textFileName1)
+    return [textFileName2 + ".txt", textFileName2] 
+    
 currentDir = os.getcwd()
 print "Current working directory is %s" % (currentDir)
 print "Creating output environment"
@@ -51,7 +56,11 @@ print "Copying our field_descriptions.json file from %s to the files/metadata di
 subprocess.call(['cp', 'field_descriptions.json', 'files/metadata/'])
 print "Creating the jsoncatalog.txt file"
 jsonCatalogFile = codecs.open(os.path.join(currentDir, "files", "metadata" , "jsoncatalog.txt"), 'wb', "utf-8")
-
+print "Creating text file dir"
+textFileDir = os.path.join(currentDir, "textFiles")
+if not os.path.exists(textFileDir):
+    os.makedirs(textFileDir)
+    
 for item in abcData:
     url = item['URL']
     print url
@@ -70,5 +79,16 @@ for item in abcData:
     textP = getText(url)
     print textP
     print "creating full text"
-    fullText = " ".join([title, textP, subjects, station, place, keywords])
+    fullTextPre = " ".join([title, textP, subjects, station, place, keywords])
+    fullText = removeEverythingButAlphaNumeric(fullTextPre)
     searchString = createSearchString(year, place, url, title)
+    print "Writing to the jsoncatalogfile"
+    jsonCatalogFile.write(createJsonCatalogTxt(paper_year, uni, manuscript_text_file, searchString))
+    jsonCatalogFile.write("\n")
+    print "Creating text file"
+    createTextFileName(url)
+    textFileObject = open(os.path.join(textFileDir, textFileName[0]), 'wb')
+    textFileObject.write(fullText)
+    textFileObject.close()
+    print "* finished processing this single item"
+print "Finished processing all items"
