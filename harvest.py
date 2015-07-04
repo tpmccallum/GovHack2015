@@ -26,5 +26,5 @@ for item in abcData:
     place = item['Place']
     keywords = item['Keywords']
     text = getText(url)
-    textString = " ".join(title, subjects, station, place, keywords, text)
+    textString.join(title, subjects, station, place, keywords, text)
     print "\n %s " % (textString)
