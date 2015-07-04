@@ -71,4 +71,4 @@ for item in abcData:
     print textP
     print "creating full text"
     fullText = " ".join([title, textP, subjects, station, place, keywords])
-    searchString = createSearchString(paper_year, uni, manuscript_url, paper_title)
+    searchString = createSearchString(year, place, url, title)
