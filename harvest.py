@@ -104,3 +104,10 @@ for item in abcData:
     
     print "* finished processing this single item"
 print "Finished processing all items"
+
+#move these files over to the bookworm instance and create the json file which has to go into files/metadata before running the make file
+#[
+#{"field":"date","datatype":"time","type":"numeric","unique":true,"derived":[{"resolution":"year"}]},
+#{"field":"searchstring","datatype":"searchstring","type":"text","unique":true},
+#{"field":"town","datatype":"categorical","type":"text","unique":true}
+#]
